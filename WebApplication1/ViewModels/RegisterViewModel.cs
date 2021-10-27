@@ -26,7 +26,7 @@ namespace WebApplication1.ViewModels
         [DataType(DataType.Password)]
         [StringLength(100, ErrorMessage = "Поле {0} должно иметь минимум {2} и максимум {1} символов.", MinimumLength = 5)]
         [Display(Name = "Пароль")]
-       
+
         public string Password { get; set; }
 
         [Required(ErrorMessage = "Повторите ввод пароля")]
@@ -35,9 +35,5 @@ namespace WebApplication1.ViewModels
         [Display(Name = "Подтвердить пароль")]
         public string PasswordConfirm { get; set; }
 
-        [Required]
-        [Compare("Сonsent", ErrorMessage = "Дайте согласие на обработку персональных данных")]
-        [Display(Name = "Согласие на обработку персональных данных")]
-       
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebApplication1.ViewModels
+namespace WebApplication1.ViewModels.Users
 {
     public class EditUserViewModel
     {

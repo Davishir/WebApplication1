@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using WebApplication1.Models;
-using WebApplication1.ViewModels;
+using WebApplication1.ViewModels.Users;
 
 namespace WebApplication1.Controllers
 {
@@ -98,16 +98,33 @@ namespace WebApplication1.Controllers
             return View(model);
         }
 
-        [HttpPost]
+        // GET: Users/Delete/5
         public async Task<ActionResult> Delete(string id)
         {
-            User user = await _userManager.FindByIdAsync(id);
-            if (user != null)
+            if (id == null)
             {
-                IdentityResult result = await _userManager.DeleteAsync(user);
+                return NotFound();
             }
-            return RedirectToAction("Index");
+
+            User user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+    
+            }
+            return View(user);
         }
+
+        // POST: Users/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            User user = await _userManager.FindByIdAsync(id);
+            IdentityResult result = await _userManager.DeleteAsync(user);
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }    
 
