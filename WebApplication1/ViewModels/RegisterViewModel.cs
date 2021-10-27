@@ -38,6 +38,6 @@ namespace WebApplication1.ViewModels
         [Required]
         [Compare("Сonsent", ErrorMessage = "Дайте согласие на обработку персональных данных")]
         [Display(Name = "Согласие на обработку персональных данных")]
-        public bool Сonsent { get; set; }
+       
     }
 }
