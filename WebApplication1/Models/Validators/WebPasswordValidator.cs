@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace WebApplication1.Models
+namespace WebApplication1.Models.Validators
 {
-    public class CustomPasswordValidator : IPasswordValidator<User>
+    public class WebPasswordValidator : IPasswordValidator<User>
     {
         public int RequiredLength { get; set; } // минимальная длина
 
-        public CustomPasswordValidator(int length)
+        public WebPasswordValidator(int length)
         {
             RequiredLength = length;
         }
@@ -24,18 +24,21 @@ namespace WebApplication1.Models
             {
                 errors.Add(new IdentityError
                 {
-                    Description = $"Минимальная длина пароля равна {RequiredLength}"
+                    Description = $"Пароль должен содержать минимум {RequiredLength} символов"
                 });
             }
-            string pattern = "^[0-9]+$";
+
+
+            string pattern = "(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])[A-Za-z0-9]+$";
 
             if (!Regex.IsMatch(password, pattern))
             {
                 errors.Add(new IdentityError
                 {
-                    Description = "Пароль должен состоять только из цифр"
+                    Description = "Пароль должен состоять из цифр, строчных и прописных латинских букв"
                 });
             }
+
             return Task.FromResult(errors.Count == 0 ?
                 IdentityResult.Success : IdentityResult.Failed(errors.ToArray()));
         }

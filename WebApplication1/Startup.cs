@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using WebApplication1.Models.Validators;
 
 namespace WebApplication1
 {
@@ -18,8 +19,13 @@ namespace WebApplication1
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // ƒобавление сервиса валидатора парол€
             services.AddTransient<IPasswordValidator<User>,
-            CustomPasswordValidator>(serv => new CustomPasswordValidator(6));
+            WebPasswordValidator>(serv => new WebPasswordValidator(8));
+            
+           
+            // ƒобавление сервиса валидатора пользовател€
+            services.AddTransient<IUserValidator<User>, WebUserValidator>();
 
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
