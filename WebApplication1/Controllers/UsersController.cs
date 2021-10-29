@@ -1,13 +1,16 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WebApplication1.Models;
 using WebApplication1.ViewModels.Users;
-using System.Collections.Generic;
 
 namespace WebApplication1.Controllers
 {
+    [Authorize(Roles = "admin")]
+   
     public class UsersController : Controller
     {
         UserManager<User> _userManager;
@@ -19,6 +22,7 @@ namespace WebApplication1.Controllers
             _roleManager = roleManager;
         }
 
+       
         public IActionResult Index() => View(_userManager.Users.ToList());
 
         public IActionResult Create() => View();
@@ -101,7 +105,6 @@ namespace WebApplication1.Controllers
             return View(model);
         }
 
-        // GET: Users/Delete/5
         public async Task<ActionResult> Delete(string id)
         {
             if (id == null)
@@ -113,7 +116,6 @@ namespace WebApplication1.Controllers
             if (user == null)
             {
                 return NotFound();
-    
             }
             return View(user);
         }
@@ -136,9 +138,9 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
             ChangePasswordViewModel model = new ChangePasswordViewModel
-            { 
-                Id = user.Id, 
-                Email = user.Email 
+            {
+                Id = user.Id,
+                Email = user.Email
             };
             return View(model);
         }
@@ -180,13 +182,12 @@ namespace WebApplication1.Controllers
             return View(model);
         }
 
+      
         public async Task<IActionResult> EditRoles(string userId)
         {
-            // получаем пользователя
             User user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                // получем список ролей пользователя
                 var userRoles = await _userManager.GetRolesAsync(user);
                 var allRoles = _roleManager.Roles.ToList();
                 ChangeRoleViewModel model = new ChangeRoleViewModel
@@ -205,17 +206,12 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public async Task<IActionResult> EditRoles(string userId, List<string> roles)
         {
-            // получаем пользователя
             User user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                // получем список ролей пользователя
                 var userRoles = await _userManager.GetRolesAsync(user);
-                // получаем все роли
                 var allRoles = _roleManager.Roles.ToList();
-                // получаем список ролей, которые были добавлены
                 var addedRoles = roles.Except(userRoles);
-                // получаем роли, которые были удалены
                 var removedRoles = userRoles.Except(roles);
 
                 await _userManager.AddToRolesAsync(user, addedRoles);
@@ -228,5 +224,4 @@ namespace WebApplication1.Controllers
             return NotFound();
         }
     }
-}    
-
+}

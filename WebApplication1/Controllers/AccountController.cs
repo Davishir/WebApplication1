@@ -1,45 +1,60 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.ViewModels;
+using System.Threading.Tasks;
 using WebApplication1.Models;
-using Microsoft.AspNetCore.Identity;
- 
+using WebApplication1.ViewModels;
+
 namespace WebApplication1.Controllers
 {
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
+
         [HttpGet]
+        
         public IActionResult Register()
         {
             return View();
         }
+
         [HttpPost]
+       
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
+              
                 User user = new User
-                { 
+                {
+                    LastName = model.LastName,
+                    FirstName = model.FirstName,
+                    Patronymic = model.Patronymic,
                     Email = model.Email,
-                    UserName = model.Email,
-                    LastName = model.LastName, 
-                    FirstName = model.FirstName, 
-                    Patronymic = model.Patronymic 
+                    UserName = model.Email
                 };
-                // добавляем пользователя
+
+                
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
+
+                    
+                    await _userManager.AddToRoleAsync(user, "registeredUser");
+
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -50,8 +65,9 @@ namespace WebApplication1.Controllers
                     }
                 }
             }
-            return View(model);
+            return View(model);   
         }
+
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
@@ -92,7 +108,7 @@ namespace WebApplication1.Controllers
         {
             // удаляем аутентификационные куки
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
     }
 }
